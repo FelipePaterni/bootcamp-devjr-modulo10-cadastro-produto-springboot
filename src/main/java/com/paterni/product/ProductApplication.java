@@ -1,13 +1,13 @@
-package com.abutua.productbackend;
+package com.paterni.product;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ProductBackendApplication {
+public class ProductApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ProductBackendApplication.class, args);
+		SpringApplication.run(ProductApplication.class, args);
 	}
 
 }
