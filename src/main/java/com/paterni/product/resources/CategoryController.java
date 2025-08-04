@@ -1,4 +1,4 @@
-package com.abutua.productbackend.resources;
+package com.paterni.product.resources;
 
 import java.util.Arrays;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.abutua.productbackend.models.Category;
+import com.paterni.product.models.Category;
 
 @RestController
 @CrossOrigin

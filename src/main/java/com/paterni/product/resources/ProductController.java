@@ -1,4 +1,4 @@
-package com.abutua.productbackend.resources;
+package com.paterni.product.resources;
 
 import java.net.URI;
 import java.util.ArrayList;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.abutua.productbackend.models.Product;
+import com.paterni.product.models.Product;
 
 @RestController
 @CrossOrigin
