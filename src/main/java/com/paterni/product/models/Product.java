@@ -60,7 +60,7 @@ public class Product {
         return category;
     }
 
-    public void setIdCategory(Category category) {
+    public void setCategory(Category category) {
         this.category = category;
     }
 
