@@ -9,7 +9,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.paterni.product.models.Category;
 import com.paterni.product.models.Product;
-import com.paterni.product.repositories.CategoryRepository;
 import com.paterni.product.repositories.ProductRepository;
 
 @Service
@@ -18,9 +17,10 @@ public class ProductServices {
     @Autowired
     private ProductRepository productRepository;
     @Autowired
-    private CategoryRepository categoryRepository;
+    private CategoryServices categoryServices;
 
     public Product save(Product product) {
+        checkCategory(product);
         return productRepository.save(product);
     }
 
@@ -42,12 +42,9 @@ public class ProductServices {
     public void update(int id , Product productUpdate) {
     Product product = getById(id);
 
-        if (productUpdate.getCategory() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
-        }
-        Category category = categoryRepository.findById(productUpdate.getCategory().getId())
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
-
+        checkCategory(productUpdate);
+        
+        Category category = categoryServices.getById(productUpdate.getCategory().getId());
         product.setDescription(productUpdate.getDescription());
         product.setName(productUpdate.getName());
         product.setPrice(productUpdate.getPrice());
@@ -56,5 +53,16 @@ public class ProductServices {
         product.setCategory(category);
 
         productRepository.save(product);
+    }
+
+    public Category checkCategory(Product product){
+        if (product.getCategory() == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
+        }
+       return categoryServices.getById(product.getCategory().getId());
+    }
+
+    public Category getCategoryByProductID(int id){
+        return  getById(id).getCategory();
     }
 }

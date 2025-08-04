@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.paterni.product.models.Category;
 import com.paterni.product.models.Product;
 import com.paterni.product.services.ProductServices;
+
 
 @RestController
 @CrossOrigin
@@ -25,15 +27,22 @@ public class ProductController {
     @Autowired
     private ProductServices productServices;
 
+    @GetMapping("products")
+    public List<Product> getProducts() {
+        return productServices.getAll();
+    }
+
     @GetMapping("products/{id}")
     public ResponseEntity<Product> getProduct(@PathVariable int id) {
         return ResponseEntity.ok(productServices.getById(id));
     }
 
-    @GetMapping("products")
-    public List<Product> getProducts() {
-        return productServices.getAll();
+    @GetMapping("products/{id}/category")
+    public ResponseEntity<Category> getCategory(@PathVariable int id) {
+        Category category = productServices.getCategoryByProductID(id);
+        return ResponseEntity.ok(category);
     }
+    
 
     @DeleteMapping("products/{id}")
     public ResponseEntity<Void> removeProduct(@PathVariable int id) {
