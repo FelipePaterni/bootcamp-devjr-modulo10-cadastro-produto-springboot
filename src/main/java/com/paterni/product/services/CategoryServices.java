@@ -7,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.paterni.product.models.Category;
-
 import com.paterni.product.repositories.CategoryRepository;
 
 import org.springframework.stereotype.Service;
@@ -26,4 +25,23 @@ public class CategoryServices {
     public List<Category> getAll() {
         return categoryRepository.findAll();
     }
+
+    public void deteleById(int id) {
+        Category category = getById(id);
+        categoryRepository.delete(category);
+    }
+
+    public void update(int id, Category categoryUpdate) {
+        Category category = getById(id);
+
+        category.setName(categoryUpdate.getName());
+
+        categoryRepository.save(category);
+    }
+
+    
+    public Category save(Category product) {
+        return categoryRepository.save(product);
+    }
+
 }

@@ -24,7 +24,7 @@ public class ProductServices {
         return productRepository.save(product);
     }
 
-    public Product getById(int id) {
+    public Product getById(long id) {
         Product product = productRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
         return product;
@@ -34,12 +34,12 @@ public class ProductServices {
         return productRepository.findAll();
     }
 
-    public void deteleById(int id) {
+    public void deteleById(long id) {
         Product product = getById(id);
         productRepository.delete(product);
     }
 
-    public void update(int id , Product productUpdate) {
+    public void update(long id , Product productUpdate) {
     Product product = getById(id);
 
         checkCategory(productUpdate);
@@ -62,7 +62,7 @@ public class ProductServices {
        return categoryServices.getById(product.getCategory().getId());
     }
 
-    public Category getCategoryByProductID(int id){
+    public Category getCategoryByProductID(long id){
         return  getById(id).getCategory();
     }
 }
