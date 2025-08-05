@@ -2,6 +2,10 @@ package com.paterni.product.models;
 
 import java.io.Serializable;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -19,18 +23,25 @@ public class Product implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 255)
+    @NotBlank(message = "Name can not be null")
+    @Size(min = 3, max = 255, message = "Name length min = 3 and max = 255")
     private String name;
-    
-    @Column(nullable = false,length = 1024)
+
+    @Column(nullable = false, length = 1024)
+    @NotBlank(message = "Description can not be null")
+    @Size(min = 3, max = 1020, message = "Description length min = 3 and max = 1024")
     private String description;
 
-    @ManyToOne
-    private Category category;
+    @Min(value = 0, message = "Price min value = 0")
+    private Double price;
 
     private boolean promotion;
     private boolean newProduct;
-    private Double price;
+
+    @ManyToOne
+    @Valid
+    private Category category;
 
     // Métodos Construtores
     public Product(Long id, String name, Double price) {
@@ -142,7 +153,4 @@ public class Product implements Serializable {
                 + ", newProduct=" + newProduct + ", price=" + price + "]";
     }
 
-    
-
-    
 }
