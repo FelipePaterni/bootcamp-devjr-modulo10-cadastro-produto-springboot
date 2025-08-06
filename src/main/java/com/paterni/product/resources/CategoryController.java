@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.paterni.product.models.Category;
+import com.paterni.product.dto.CategoryRequest;
+import com.paterni.product.dto.CategoryResponse;
 import com.paterni.product.services.CategoryServices;
-
 
 @RestController
 @CrossOrigin
@@ -30,14 +30,15 @@ public class CategoryController {
     private CategoryServices categoryServices;
 
     @GetMapping("{id}")
-    public ResponseEntity<Category> getCategory(@PathVariable int id) {
-        return ResponseEntity.ok(categoryServices.getById(id));
+    public ResponseEntity<CategoryResponse> getCategory(@PathVariable int id) {
+        CategoryResponse category = categoryServices.getDTOById(id);
+        return ResponseEntity.ok(category);
     }
 
     @GetMapping()
-    public ResponseEntity<List<Category>> getCategories() {
-        return  ResponseEntity.ok(categoryServices.getAll());
-    }    
+    public ResponseEntity<List<CategoryResponse>> getCategories() {
+            return ResponseEntity.ok(categoryServices.getAll());
+    }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> removeProduct(@PathVariable int id) {
@@ -46,15 +47,15 @@ public class CategoryController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable int id, @RequestBody Category categoryUpdate) {
+    public ResponseEntity<Void> updateProduct(@PathVariable int id, @RequestBody CategoryRequest categoryUpdate) {
         categoryServices.update(id, categoryUpdate);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping()
-    public ResponseEntity<Category> save(@Validated @RequestBody Category category) {
+    public ResponseEntity<CategoryResponse> save(@Validated @RequestBody CategoryRequest categoryRequest) {
 
-        category = categoryServices.save(category);
+        CategoryResponse category = categoryServices.save(categoryRequest);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")

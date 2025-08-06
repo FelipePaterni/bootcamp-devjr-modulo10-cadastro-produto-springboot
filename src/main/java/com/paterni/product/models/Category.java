@@ -1,6 +1,7 @@
 package com.paterni.product.models;
 
 import java.io.Serializable;
+import com.paterni.product.dto.CategoryResponse;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,6 +28,10 @@ public class Category implements Serializable {
     public Category() {
     }
 
+    public Category(String name) {
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -41,6 +46,11 @@ public class Category implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+
+    public CategoryResponse toDTO(){
+        return new CategoryResponse(id, name);
     }
 
     @Override
@@ -72,5 +82,6 @@ public class Category implements Serializable {
     public String toString() {
         return "Category [id=" + id + ", name=" + name + "]";
     }
+
 
 }

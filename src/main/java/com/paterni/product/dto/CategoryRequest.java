@@ -1,5 +1,7 @@
 package com.paterni.product.dto;
 
+import com.paterni.product.models.Category;
+
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
@@ -14,6 +16,10 @@ public class CategoryRequest {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public Category toEntity() {
+        return new Category(name);
     }
 
 }
