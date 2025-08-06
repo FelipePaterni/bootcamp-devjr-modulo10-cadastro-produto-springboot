@@ -41,13 +41,13 @@ public class CategoryController {
     }
 
     @DeleteMapping("{id}")
-    public ResponseEntity<Void> removeProduct(@PathVariable int id) {
+    public ResponseEntity<Void> removeCategory(@PathVariable int id) {
         categoryServices.deteleById(id);
         return ResponseEntity.noContent().build();
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable int id, @RequestBody CategoryRequest categoryUpdate) {
+    public ResponseEntity<Void> updateCategory(@PathVariable int id, @RequestBody CategoryRequest categoryUpdate) {
         categoryServices.update(id, categoryUpdate);
         return ResponseEntity.ok().build();
     }

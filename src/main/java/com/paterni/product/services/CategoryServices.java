@@ -20,8 +20,7 @@ public class CategoryServices {
     private CategoryRepository categoryRepository;
 
     public Category getById(int id) {
-        Category category = categoryRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
+        Category category = getById(id);          
         return category;
     }
 

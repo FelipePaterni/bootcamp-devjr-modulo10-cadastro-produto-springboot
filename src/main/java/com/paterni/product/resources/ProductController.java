@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import com.paterni.product.models.Category;
-import com.paterni.product.models.Product;
+import com.paterni.product.dto.ProductRequest;
+import com.paterni.product.dto.ProductResponse;
 import com.paterni.product.services.ProductServices;
 
 
@@ -31,21 +31,15 @@ public class ProductController {
     private ProductServices productServices;
 
     @GetMapping
-    public ResponseEntity<List<Product>> getProducts() {
+    public ResponseEntity<List<ProductResponse>> getProducts() {
         return  ResponseEntity.ok(productServices.getAll());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Product> getProduct(@PathVariable long id) {
-        return ResponseEntity.ok(productServices.getById(id));
+    public ResponseEntity<ProductResponse> getProduct(@PathVariable long id) {
+        return ResponseEntity.ok(productServices.getDTOById(id));
     }
 
-    @GetMapping("{id}/category")
-    public ResponseEntity<Category> getCategory(@PathVariable long id) {
-        Category category = productServices.getCategoryByProductID(id);
-        return ResponseEntity.ok(category);
-    }
-    
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> removeProduct(@PathVariable long id) {
@@ -54,20 +48,20 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable long id, @RequestBody Product productUpdate) {
+    public ResponseEntity<Void> updateProduct(@PathVariable long id, @RequestBody ProductRequest productUpdate) {
         productServices.update(id, productUpdate);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping()
-    public ResponseEntity<Product> save(@Validated @RequestBody Product product) {
+    public ResponseEntity<ProductResponse> save(@Validated @RequestBody ProductRequest productRequest) {
 
-        product = productServices.save(product);
+       ProductResponse productResponse = productServices.save(productRequest);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(product.getId())
+                .buildAndExpand(productResponse.getId())
                 .toUri();
-        return ResponseEntity.created(location).body(product);
+        return ResponseEntity.created(location).body(productResponse);
     }
 }

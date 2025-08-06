@@ -1,12 +1,15 @@
 package com.paterni.product.services;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.paterni.product.dto.ProductRequest;
+import com.paterni.product.dto.ProductResponse;
 import com.paterni.product.models.Category;
 import com.paterni.product.models.Product;
 import com.paterni.product.repositories.ProductRepository;
@@ -19,10 +22,17 @@ public class ProductServices {
     @Autowired
     private CategoryServices categoryServices;
 
-    public Product save(Product product) {
-        checkCategory(product);
-        return productRepository.save(product);
+    public ProductResponse save(ProductRequest productRequest) {
+        Product newProduct = productRepository.save(productRequest.toEntity());
+     
+        return newProduct.toDTO();
     }
+
+     public ProductResponse getDTOById(long id) {
+        Product product = getById(id);
+        return product.toDTO();
+    }
+
 
     public Product getById(long id) {
         Product product = productRepository.findById(id)
@@ -30,8 +40,11 @@ public class ProductServices {
         return product;
     }
 
-    public List<Product> getAll() {
-        return productRepository.findAll();
+    public List<ProductResponse> getAll() {
+        return productRepository.findAll()
+                                .stream()
+                                .map(p -> p.toDTO())
+                                .collect(Collectors.toList());
     }
 
     public void deteleById(long id) {
@@ -39,12 +52,12 @@ public class ProductServices {
         productRepository.delete(product);
     }
 
-    public void update(long id , Product productUpdate) {
+    public void update(long id , ProductRequest productUpdate) {
     Product product = getById(id);
 
-        checkCategory(productUpdate);
+        checkCategory(productUpdate.toEntity());
         
-        Category category = categoryServices.getById(productUpdate.getCategory().getId());
+        Category category = categoryServices.getById(productUpdate.toEntity().getCategory().getId());
         product.setDescription(productUpdate.getDescription());
         product.setName(productUpdate.getName());
         product.setPrice(productUpdate.getPrice());
@@ -62,7 +75,5 @@ public class ProductServices {
        return categoryServices.getById(product.getCategory().getId());
     }
 
-    public Category getCategoryByProductID(long id){
-        return  getById(id).getCategory();
-    }
+  
 }
