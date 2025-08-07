@@ -23,6 +23,16 @@ public class CategoryServices {
     @Autowired
     private CategoryRepository categoryRepository;
 
+    public CategoryResponse save(CategoryRequest categoryRequest) {
+        try {
+            Category category = categoryRepository.save(categoryRequest.toEntity());
+            return category.toDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Constrain violation, category name already exists");
+        }
+
+    }
+
     public CategoryResponse getById(int id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
@@ -58,16 +68,6 @@ public class CategoryServices {
         } catch (EntityNotFoundException e) {
             throw new EntityNotFoundException("Category not found");
         }
-    }
-
-    public CategoryResponse save(CategoryRequest categoryRequest) {
-        try {
-            Category category = categoryRepository.save(categoryRequest.toEntity());
-            return category.toDTO();
-        } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Constrain violation, category name already exists");
-        }
-
     }
 
 }
