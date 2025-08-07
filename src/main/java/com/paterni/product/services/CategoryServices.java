@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -11,6 +12,9 @@ import com.paterni.product.dto.CategoryRequest;
 import com.paterni.product.dto.CategoryResponse;
 import com.paterni.product.models.Category;
 import com.paterni.product.repositories.CategoryRepository;
+import com.paterni.product.services.exceptions.DatabaseException;
+
+import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
 
@@ -19,12 +23,7 @@ public class CategoryServices {
     @Autowired
     private CategoryRepository categoryRepository;
 
-    public Category getById(int id) {
-        Category category = getById(id);          
-        return category;
-    }
-
-    public CategoryResponse getDTOById(int id) {
+    public CategoryResponse getById(int id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         return category.toDTO();
@@ -39,21 +38,36 @@ public class CategoryServices {
     }
 
     public void deteleById(int id) {
-        Category category = getById(id);
-        categoryRepository.delete(category);
+        try {
+            if (categoryRepository.existsById(id)) {
+                categoryRepository.deleteById(id);
+            } else
+                throw new EntityNotFoundException("Category not found");
+
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Constrain violation, category can't delete");
+        }
+
     }
 
     public void update(int id, CategoryRequest categoryUpdate) {
-        Category category = getById(id);
-
-        category.setName(categoryUpdate.getName());
-
-        categoryRepository.save(category);
+        try {
+            Category category = categoryRepository.getReferenceById(id);
+            category.setName(categoryUpdate.getName());
+            categoryRepository.save(category);
+        } catch (EntityNotFoundException e) {
+            throw new EntityNotFoundException("Category not found");
+        }
     }
 
     public CategoryResponse save(CategoryRequest categoryRequest) {
-        Category category = categoryRepository.save(categoryRequest.toEntity());
-        return category.toDTO();
+        try {
+            Category category = categoryRepository.save(categoryRequest.toEntity());
+            return category.toDTO();
+        } catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Constrain violation, category name already exists");
+        }
+
     }
 
 }

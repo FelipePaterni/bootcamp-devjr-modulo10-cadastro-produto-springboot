@@ -21,6 +21,8 @@ import com.paterni.product.dto.ProductRequest;
 import com.paterni.product.dto.ProductResponse;
 import com.paterni.product.services.ProductServices;
 
+import jakarta.validation.Valid;
+
 
 @RestController
 @CrossOrigin
@@ -48,7 +50,7 @@ public class ProductController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<Void> updateProduct(@PathVariable long id, @RequestBody ProductRequest productUpdate) {
+    public ResponseEntity<Void> updateProduct(@PathVariable long id, @Valid @RequestBody ProductRequest productUpdate) {
         productServices.update(id, productUpdate);
         return ResponseEntity.ok().build();
     }

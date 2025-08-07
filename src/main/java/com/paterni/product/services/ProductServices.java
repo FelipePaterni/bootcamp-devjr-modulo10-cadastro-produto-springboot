@@ -12,27 +12,30 @@ import com.paterni.product.dto.ProductRequest;
 import com.paterni.product.dto.ProductResponse;
 import com.paterni.product.models.Category;
 import com.paterni.product.models.Product;
+import com.paterni.product.repositories.CategoryRepository;
 import com.paterni.product.repositories.ProductRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ProductServices {
 
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
-    private CategoryServices categoryServices;
+    private CategoryRepository categoryRepository;
 
     public ProductResponse save(ProductRequest productRequest) {
         Product newProduct = productRepository.save(productRequest.toEntity());
-     
+
         return newProduct.toDTO();
     }
 
-     public ProductResponse getDTOById(long id) {
+    public ProductResponse getDTOById(long id) {
         Product product = getById(id);
         return product.toDTO();
     }
-
 
     public Product getById(long id) {
         Product product = productRepository.findById(id)
@@ -42,22 +45,24 @@ public class ProductServices {
 
     public List<ProductResponse> getAll() {
         return productRepository.findAll()
-                                .stream()
-                                .map(p -> p.toDTO())
-                                .collect(Collectors.toList());
+                .stream()
+                .map(p -> p.toDTO())
+                .collect(Collectors.toList());
     }
 
     public void deteleById(long id) {
-        Product product = getById(id);
-        productRepository.delete(product);
+        if (productRepository.existsById(id)) {
+            productRepository.deleteById(id);
+        } else {
+            throw new EntityNotFoundException("Product not found");
+        }
     }
 
-    public void update(long id , ProductRequest productUpdate) {
-    Product product = getById(id);
+    public void update(long id, ProductRequest productUpdate) {
+        Product product = getById(id);
 
-        checkCategory(productUpdate.toEntity());
-        
-        Category category = categoryServices.getById(productUpdate.toEntity().getCategory().getId());
+        Category category = categoryRepository.findById(productUpdate.getCategory().getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found"));
         product.setDescription(productUpdate.getDescription());
         product.setName(productUpdate.getName());
         product.setPrice(productUpdate.getPrice());
@@ -68,12 +73,4 @@ public class ProductServices {
         productRepository.save(product);
     }
 
-    public Category checkCategory(Product product){
-        if (product.getCategory() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Category can not be empty");
-        }
-       return categoryServices.getById(product.getCategory().getId());
-    }
-
-  
 }
