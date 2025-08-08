@@ -5,16 +5,12 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
-
 import com.paterni.product.dto.ProductRequest;
 import com.paterni.product.dto.ProductResponse;
 import com.paterni.product.models.Category;
 import com.paterni.product.models.Product;
 import com.paterni.product.repositories.ProductRepository;
-import com.paterni.product.services.exceptions.DatabaseException;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -29,13 +25,13 @@ public class ProductServices {
             Product newProduct = productRepository.save(productRequest.toEntity());
             return newProduct.toDTO();
         } catch (DataIntegrityViolationException e) {
-            throw new DatabaseException("Constrain violation, category don't exist");
+            throw new EntityNotFoundException("Category not found");
         }
     }
 
     public ProductResponse getById(long id) {
         Product product = productRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+                .orElseThrow(() -> new EntityNotFoundException( "Product not found"));
         return product.toDTO();
     }
 
